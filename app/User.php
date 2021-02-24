@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'rol_id', 'password',
     ];
 
     /**
@@ -27,6 +27,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+         * Get the user that owns the User
+         *
+         * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+         */
+        public function role()
+        {
+            return $this->belongsTo(Role::class, 'role_id');
+        }
+
 
     /**
      * The attributes that should be cast to native types.
