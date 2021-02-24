@@ -18,14 +18,23 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('auth')->group(function(){
-    Route::post('register', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
-    Route::get('refresh', 'AuthController@refresh');
+Route::prefix('authservice')->group(function(){
+    #Route::post('register', 'AuthController@register');
+    #Route::post('login', 'AuthController@login');
+    #Route::get('refresh', 'AuthController@refresh');
 
     Route::group(['middleware' => 'auth.api'], function(){
         Route::get('user', 'AuthController@user');
         Route::post('logout', 'AuthController@logout');
     });
+
+});
+
+Route::group(['prefix' => 'authservice'], function () {
+
+    Route::post('login', [
+        'uses' => 'AuthController@login',
+        'as' => 'Register An Admin Account'
+    ]);
 
 });
