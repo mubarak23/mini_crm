@@ -15,11 +15,12 @@ class AuthController extends Controller
 {
     //
 
+    //refactor regiister to send back existing email
     public function register(Request $request, UserAccount $UserAccount){
         $validation = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required',
-            'password' => 'required'
+             'email' => 'required|email|unique:users',
+            'password' => 'required|min:3'
         ]);
         if($validation->fails()){
             return response()->json($validation->errors(), 401);
@@ -56,23 +57,31 @@ class AuthController extends Controller
         $data = $request->all();
         if ($token = $this->guard()->attempt($credentials)) {
             $user = User::where('email', $data['email'])->first();
-            return response()->json(['status' => 'success', 'token' => $token, 'user_id' => $user->id, 'name' => $user->name,
+            return response()->json(['status' => 'success', 'token' => $token,
+            'user_id' => $user->id, 'name' => $user->name,
         'role_id' => $user->role_id], 200)->header('Authorization', $token);
         }
         return response()->json(['error' => 'login_error'], 401);
     }
 
     public function refresh(){
+        if ($token = $this->guard()->refresh()) {
+            return response()
+                ->json(['status' => 'successs'], 200)
+                ->header('Authorization', $token);
+        }
+        return response()->json(['error' => 'refresh_token_error'], 401);
 
     }
 
     public function logout(){
-
+         $this->guard()->logout();
+        return response()->json([
+            'status' => 'success',
+            'msg' => 'Logged out Successfully.'
+        ], 200);
     }
 
-    public function user(){
-
-    }
     private function guard()
     {
         return Auth::guard();

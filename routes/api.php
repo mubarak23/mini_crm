@@ -34,7 +34,27 @@ Route::group(['prefix' => 'authservice'], function () {
 
     Route::post('login', [
         'uses' => 'AuthController@auth_login',
-        'as' => 'Register An Admin Account'
+        'as' => 'Auth An employee Account'
+    ]);
+
+    Route::post('register', [
+        'uses' => 'AuthController@register',
+        'as' => 'Register An employee Account'
+    ]);
+
+    Route::get('refresh', [
+        'uses' => 'AuthController@refresh',
+        'as' => 'refresh auth'
+    ]);
+
+});
+
+
+Route::group(['middleware' => 'auth.api'], function () {
+
+    Route::post('logout', [
+        'uses' => 'AuthController@logout',
+        'as' => ' Account Logout'
     ]);
 
 });
