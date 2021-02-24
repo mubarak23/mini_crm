@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use App\Actions\UserAccount;
 use App\Actions\AuthService;
 use App\User;
@@ -49,6 +50,18 @@ class AuthController extends Controller
          return $authlogin;
     }
 
+
+    public function auth_login(Request $request){
+        $credentials = $request->only('email', 'password');
+        $data = $request->all();
+        if ($token = $this->guard()->attempt($credentials)) {
+            $user = User::where('email', $data['email'])->first();
+            return response()->json(['status' => 'success', 'token' => $token, 'user_id' => $user->id, 'name' => $user->name,
+        'role_id' => $user->role_id], 200)->header('Authorization', $token);
+        }
+        return response()->json(['error' => 'login_error'], 401);
+    }
+
     public function refresh(){
 
     }
@@ -59,5 +72,9 @@ class AuthController extends Controller
 
     public function user(){
 
+    }
+    private function guard()
+    {
+        return Auth::guard();
     }
 }

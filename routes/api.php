@@ -33,7 +33,7 @@ Route::prefix('authservice')->group(function(){
 Route::group(['prefix' => 'authservice'], function () {
 
     Route::post('login', [
-        'uses' => 'AuthController@login',
+        'uses' => 'AuthController@auth_login',
         'as' => 'Register An Admin Account'
     ]);
 
