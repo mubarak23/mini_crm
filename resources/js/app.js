@@ -12,9 +12,14 @@ import router from "./router";
 window.Vue = Vue;
 // Set Vue router
 
+//Vue.router = router;
+Vue.use(VueRouter);
+//Vue.router = new VueRouter({
+//  routes: router
+//});
 Vue.router = router;
-Vue.router = new VueRouter();
-Vue.http.options.root = `${process.env.MIX_APP_URL}/api`;
+//Vue.use(VueRouter);
+//Vue.http.options.root = `${process.env.MIX_APP_URL}/api`;
 //Vue.use(VueRouter);
 // Set Vue authentication
 Vue.use(VueAxios, axios);

@@ -2859,6 +2859,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {//
@@ -40044,19 +40046,19 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { attrs: { id: "main" } }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { attrs: { id: "content" } }, [_c("router-view")], 1)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "main" } }, [
-      _c("header", { attrs: { id: "header" } }, [
-        _c("h1", [_vm._v("Mini CRM")])
-      ]),
-      _vm._v(" "),
-      _c("div", { attrs: { id: "content" } }, [_vm._v("Mini CRM !")])
+    return _c("header", { attrs: { id: "header" } }, [
+      _c("h1", [_vm._v("Mini CRM")])
     ])
   }
 ]
@@ -55963,10 +55965,15 @@ __webpack_require__.r(__webpack_exports__);
  // Set Vue globally
 
 window.Vue = vue__WEBPACK_IMPORTED_MODULE_3___default.a; // Set Vue router
+//Vue.router = router;
 
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = _router__WEBPACK_IMPORTED_MODULE_8__["default"];
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = new vue_router__WEBPACK_IMPORTED_MODULE_5__["default"]();
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.http.options.root = "".concat("http://127.0.0.1:8001", "/api"); //Vue.use(VueRouter);
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_5__["default"]); //Vue.router = new VueRouter({
+//  routes: router
+//});
+
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = _router__WEBPACK_IMPORTED_MODULE_8__["default"]; //Vue.use(VueRouter);
+//Vue.http.options.root = `${process.env.MIX_APP_URL}/api`;
+//Vue.use(VueRouter);
 // Set Vue authentication
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_axios__WEBPACK_IMPORTED_MODULE_4___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a); //axios.defaults.baseURL = `${process.env.MIX_APP_URL}/api`;
@@ -56512,7 +56519,7 @@ __webpack_require__.r(__webpack_exports__);
 var routes = [{
   path: "/",
   name: "home",
-  component: _pages_Home__WEBPACK_IMPORTED_MODULE_1__["default"],
+  component: _pages_Login__WEBPACK_IMPORTED_MODULE_3__["default"],
   meta: {
     auth: undefined
   }
