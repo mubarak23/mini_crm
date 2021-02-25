@@ -24,7 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "@websanova/vue-auth": "^4.1.1",
+        "@websanova/vue-auth": "^2.8.0-beta",
         "es6-promise": "^4.2.8",
         "vue-axios": "^3.2.4",
         "vue-router": "^3.5.1"

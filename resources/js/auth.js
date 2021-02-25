@@ -1,10 +1,10 @@
-import bearer from "@websanova/vue-auth/drivers/auth/bearer";
-import axios from "@websanova/vue-auth/drivers/http/axios.1.x";
-import router from "@websanova/vue-auth/drivers/router/vue-router.2.x";
+import bearer from "@websanova/vue-auth/drivers/auth/bearer.js";
+import axios from "@websanova/vue-auth/drivers/http/axios.1.x.js";
+import router from "@websanova/vue-auth/drivers/router/vue-router.2.x.js";
 // Auth base configuration some of this options
 // can be override in method calls
 const config = {
-    auth: bearer,
+    auth: require("@websanova/vue-auth/drivers/auth/bearer.js"),
     http: axios,
     router: router,
     tokenDefaultName: "mini crm",
