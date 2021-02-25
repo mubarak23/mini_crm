@@ -86,1032 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/@websanova/vue-auth/dist/v3/vue-auth.esm.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/@websanova/vue-auth/dist/v3/vue-auth.esm.js ***!
-  \******************************************************************/
-/*! exports provided: createAuth, useAuth */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createAuth", function() { return createAuth; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "useAuth", function() { return useAuth; });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
-/*!
- * @websanova/vue-auth v4.1.1
- * https://websanova.com/docs/vue-auth
- * Released under the MIT License.
- */
-
-
-
-function isObject(val) {
-  if (val !== null && typeof val === 'object' && val.constructor !== Array) {
-    return true;
-  }
-
-  return false;
-}
-
-function toArray(val) {
-  return typeof val === 'string' || typeof val === 'number' ? [val] : val;
-}
-
-function extend(mainObj, appendObj) {
-  var i,
-      ii,
-      key,
-      data = {};
-  appendObj = appendObj || {};
-
-  for (key in mainObj) {
-    if (isObject(mainObj[key]) && mainObj[key].constructor.name !== 'FormData') {
-      data[key] = extend(mainObj[key], {});
-    } else {
-      data[key] = mainObj[key];
-    }
-  }
-
-  if (appendObj.constructor !== Array) {
-    appendObj = [appendObj];
-  }
-
-  for (i = 0, ii = appendObj.length; i < ii; i++) {
-    for (key in appendObj[i]) {
-      if (isObject(appendObj[i][key]) && appendObj[i][key].constructor.name !== 'FormData') {
-        data[key] = extend(mainObj[key] || {}, [appendObj[i][key]]);
-      } else {
-        data[key] = appendObj[i][key];
-      }
-    }
-  }
-
-  return data;
-}
-
-function compare(one, two) {
-  var i, ii, key;
-
-  if (Object.prototype.toString.call(one) === '[object Object]' && Object.prototype.toString.call(two) === '[object Object]') {
-    for (key in one) {
-      if (compare(one[key], two[key])) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  one = toArray(one);
-  two = toArray(two);
-
-  if (!one || !two || one.constructor !== Array || two.constructor !== Array) {
-    return false;
-  }
-
-  for (i = 0, ii = one.length; i < ii; i++) {
-    if (two.indexOf(one[i]) >= 0) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-function isLocalStorage() {
-  try {
-    if (!window.localStorage) {
-      throw 'exception';
-    }
-
-    localStorage.setItem('storage_test', 1);
-    localStorage.removeItem('storage_test');
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function isSessionStorage() {
-  try {
-    if (!window.sessionStorage) {
-      throw 'exception';
-    }
-
-    sessionStorage.setItem('storage_test', 1);
-    sessionStorage.removeItem('storage_test');
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function isCookieStorage() {
-  return true;
-}
-
-function getProperty(obj, desc, res) {
-  var arr = desc.split('.');
-  res = res || [];
-
-  while (arr.length) {
-    obj = obj[arr.shift()];
-  }
-
-  return obj;
-}
-
-function setCookie(key, value, params) {
-  var i,
-      cookie = key + '=' + value + ';';
-
-  for (i in params) {
-    // Just skip if unset or false.
-    if (params[i] === false || params[i] === undefined) {
-      continue;
-    } // If null and an option method exists such ex: "getCookieDomain".
-    else if (params[i] === null) {
-        if (this.options['getCookie' + i]) {
-          cookie += ' ' + i + '=' + this.options['getCookie' + i]() + ';';
-        }
-      } // If true just set the flag as in "Secure;".
-      else if (params[i] === true) {
-          cookie += ' ' + i + ';';
-        } // Default key/val.
-        else {
-            cookie += ' ' + i + '=' + params[i] + ';';
-          }
-  }
-
-  document.cookie = cookie;
-}
-
-function getDate(val) {
-  if (typeof val === 'string') {
-    return val;
-  } else if (val !== null && val !== undefined) {
-    return new Date(new Date().getTime() + val).toUTCString();
-  }
-
-  return val;
-}
-
-function set(key, value, expires) {
-  var params = this.options.cookie;
-  params.Expires = expires === true ? '' : getDate(params.Expires);
-  setCookie.call(this, key, value, params);
-}
-
-function get(key) {
-  var i,
-      ii,
-      cookie = document.cookie;
-  cookie = cookie.replace(/;\s+/g, ';').split(';').map(function (s) {
-    return s.replace(/\s+=\s+/g, '=').split('=');
-  });
-
-  for (i = 0, ii = cookie.length; i < ii; i++) {
-    if (cookie[i][0] && cookie[i][0] === key) {
-      return cookie[i][1];
-    }
-  }
-
-  return null;
-}
-
-function remove(key) {
-  var params = Object.assign({}, this.options.cookie);
-  params.Expires = getDate(-12096e5);
-  setCookie.call(this, key, '', params);
-}
-
-var __cookie = /*#__PURE__*/Object.freeze({
-    get: get,
-    set: set,
-    remove: remove
-});
-
-function set$1(key, value, expires) {
-  if (expires) {
-    sessionStorage.setItem(key, value);
-  } else {
-    localStorage.setItem(key, value);
-  }
-}
-
-function get$1(key) {
-  return sessionStorage.getItem(key) || localStorage.getItem(key);
-}
-
-function remove$1(key) {
-  localStorage.removeItem(key);
-  sessionStorage.removeItem(key);
-}
-
-var __storage = /*#__PURE__*/Object.freeze({
-    get: get$1,
-    set: set$1,
-    remove: remove$1
-});
-
-function getTokenKey(key) {
-  key = key || this.currentToken;
-
-  if (key) {
-    return key;
-  }
-
-  if (this.impersonating()) {
-    return this.options.tokenImpersonateKey;
-  }
-
-  return this.options.tokenDefaultKey;
-}
-
-function processToken(action, key, token, expires) {
-  var i = 0,
-      ts = this.options.stores,
-      ii = ts.length,
-      args = [getTokenKey.call(this, key)];
-
-  if (action === 'set') {
-    args.push(token);
-    args.push(expires === true ? true : false);
-  }
-
-  for (; i < ii; i++) {
-    if (typeof ts[i][action] === 'function') {
-      return ts[i][action].apply(this, args);
-    }
-
-    if (ts[i] === 'storage' && isLocalStorage() && isSessionStorage()) {
-      return __storage[action].apply(this, args);
-    }
-
-    if (ts[i] === 'cookie' && isCookieStorage()) {
-      return __cookie[action].apply(this, args);
-    }
-  }
-}
-
-function get$2(key) {
-  return processToken.call(this, 'get', key);
-}
-
-function set$2(key, token, expires) {
-  return processToken.call(this, 'set', key, token, expires);
-}
-
-function remove$2(key) {
-  return processToken.call(this, 'remove', key);
-}
-
-var __auth = null;
-var __defaultOptions = {
-  // Variables
-  rolesKey: 'roles',
-  rememberKey: 'auth_remember',
-  staySignedInKey: 'auth_stay_signed_in',
-  tokenDefaultKey: 'auth_token_default',
-  tokenImpersonateKey: 'auth_token_impersonate',
-  stores: ['storage', 'cookie'],
-  cookie: {
-    Path: '/',
-    Domain: null,
-    Secure: true,
-    Expires: 12096e5,
-    SameSite: 'None'
-  },
-  // Redirects
-  authRedirect: {
-    path: '/login'
-  },
-  forbiddenRedirect: {
-    path: '/403'
-  },
-  notFoundRedirect: {
-    path: '/404'
-  },
-  // Http
-  registerData: {
-    url: 'auth/register',
-    method: 'POST',
-    redirect: '/login',
-    autoLogin: false
-  },
-  loginData: {
-    url: 'auth/login',
-    method: 'POST',
-    redirect: '/',
-    fetchUser: true,
-    staySignedIn: true
-  },
-  logoutData: {
-    url: 'auth/logout',
-    method: 'POST',
-    redirect: '/',
-    makeRequest: false
-  },
-  fetchData: {
-    url: 'auth/user',
-    method: 'GET',
-    enabled: true
-  },
-  refreshData: {
-    url: 'auth/refresh',
-    method: 'GET',
-    enabled: true,
-    interval: 30
-  },
-  impersonateData: {
-    url: 'auth/impersonate',
-    method: 'POST',
-    redirect: '/',
-    fetchUser: true
-  },
-  unimpersonateData: {
-    url: 'auth/unimpersonate',
-    method: 'POST',
-    redirect: '/admin',
-    fetchUser: true,
-    makeRequest: false
-  },
-  oauth2Data: {
-    url: 'auth/social',
-    method: 'POST',
-    redirect: '/',
-    fetchUser: true
-  },
-  // External
-  getUrl: _getUrl,
-  getCookieDomain: _getCookieDomain,
-  parseUserData: _parseUserData
-};
-
-function _isAccess(role, key) {
-  if (__auth.$vm.state.authenticated === true) {
-    if (role) {
-      return compare(role, getProperty(__auth.$vm.state.data || {}, key || __auth.options.rolesKey));
-    }
-
-    return true;
-  }
-
-  return false;
-}
-
-function _isTokenExpired() {
-  return !get$2.call(__auth);
-}
-
-function _getAuthMeta(transition) {
-  var auth, authRoutes;
-
-  if (transition.to) {
-    auth = transition.to.auth;
-  } else {
-    authRoutes = transition.matched.filter(function (route) {
-      return Object.prototype.hasOwnProperty.call(route.meta, 'auth');
-    }); // matches the nested route, the last one in the list
-
-    if (authRoutes.length) {
-      auth = authRoutes[authRoutes.length - 1].meta.auth;
-    }
-  }
-
-  return auth;
-}
-
-function _getCookieDomain() {
-  return window.location.hostname;
-}
-
-function _getUrl() {
-  var port = window.location.port;
-  return window.location.protocol + '//' + window.location.hostname + (port ? ':' + port : '');
-}
-
-function _getRemember() {
-  return get$2.call(__auth, __auth.options.rememberKey);
-}
-
-function _setUser(data) {
-  __auth.$vm.state.data = data;
-}
-
-function _setLoaded(loaded) {
-  __auth.$vm.state.loaded = loaded;
-}
-
-function _setAuthenticated(authenticated) {
-  __auth.$vm.state.loaded = true;
-  __auth.$vm.state.authenticated = authenticated;
-}
-
-function _setStaySignedIn(staySignedIn) {
-  if (staySignedIn === true) {
-    set$2.call(__auth, __auth.options.staySignedInKey, 'true', false);
-  } else {
-    remove$2.call(__auth, __auth.options.staySignedInKey);
-  }
-}
-
-function _setRemember(val) {
-  if (val) {
-    set$2.call(__auth, __auth.options.rememberKey, val, false);
-
-    __auth.$vm.state.remember = val;
-  } else {
-    remove$2.call(__auth, __auth.options.rememberKey);
-
-    __auth.$vm.state.remember = null;
-  }
-}
-
-function _setTransitions(transition) {
-  __auth.transitionPrev = __auth.transitionThis;
-  __auth.transitionThis = transition;
-}
-
-function _parseUserData(data) {
-  return data.data || {};
-}
-
-function _parseUserResponseData(res) {
-  return __auth.options.parseUserData(__auth.drivers.http.httpData(res));
-}
-
-function _parseRedirectUri(uri) {
-  uri = uri || '';
-
-  if (/^https?:\/\//.test(uri)) {
-    return uri;
-  }
-
-  return _getUrl() + '/' + uri.replace(/^\/|\/$/g, '');
-}
-
-function _parseRequestIntercept(req) {
-  var token, tokenName;
-
-  if (req && req.ignoreVueAuth) {
-    return req;
-  }
-
-  if (req.impersonating === false && __auth.impersonating()) {
-    tokenName = __auth.options.tokenDefaultKey;
-  }
-
-  token = get$2.call(__auth, tokenName);
-
-  if (token) {
-    __auth.drivers.auth.request.call(__auth, req, token);
-  }
-
-  return req;
-}
-
-function _parseResponseIntercept(res, req) {
-  var token;
-
-  if (req && req.ignoreVueAuth) {
-    return;
-  }
-
-  _processInvalidToken(res, __auth.transitionThis);
-
-  token = __auth.drivers.auth.response.call(__auth, res);
-
-  if (token) {
-    set$2.call(__auth, null, token, get$2.call(__auth, __auth.options.staySignedInKey) ? false : true);
-  }
-}
-
-function _processInvalidToken(res, transition) {
-  var i,
-      auth,
-      query = '',
-      redirect = transition && transition.path; // Make sure we also attach any existing
-  // query parameters on the path.
-
-  if (redirect && transition.query) {
-    for (i in transition.query) {
-      if (transition.query[i]) {
-        query += '&' + i + '=' + transition.query[i];
-      }
-    }
-
-    redirect += '?' + query.substring(1);
-  }
-
-  if (!__auth.drivers.http.invalidToken || !__auth.drivers.http.invalidToken.call(__auth, res)) {
-    return;
-  }
-
-  if (transition) {
-    auth = _getAuthMeta(transition);
-  }
-
-  if (auth) {
-    redirect = auth.redirect || __auth.options.authRedirect;
-  }
-
-  _processLogout({
-    redirect: redirect
-  });
-}
-
-function _processRouterBeforeEach(cb) {
-  var isTokenExpired = _isTokenExpired();
-
-  if (isTokenExpired && __auth.$vm.state.authenticated) {
-    _processLogout();
-  }
-
-  if (!isTokenExpired && !__auth.$vm.state.loaded && __auth.options.refreshData.enabled) {
-    __auth.refresh().then(function () {
-      _processAuthenticated(cb);
-    });
-
-    return;
-  }
-
-  _processAuthenticated(cb);
-}
-
-function _processAuthenticated(cb) {
-  if (__auth.$vm.state.authenticated === null && get$2.call(__auth)) {
-    if (__auth.options.fetchData.enabled) {
-      __auth.fetch().then(cb, cb);
-    } else {
-      _processFetch({});
-
-      return cb.call(__auth);
-    }
-  } else {
-    _setLoaded(true);
-
-    return cb.call(__auth);
-  }
-}
-
-function _processTransitionEach(transition, routeAuth, cb) {
-  var authRedirect = (routeAuth || '').redirect || __auth.options.authRedirect,
-      forbiddenRedirect = (routeAuth || '').forbiddenRedirect || (routeAuth || '').redirect || __auth.options.forbiddenRedirect,
-      notFoundRedirect = (routeAuth || '').notFoundRedirect || (routeAuth || '').redirect || __auth.options.notFoundRedirect;
-  routeAuth = toArray((routeAuth || '').roles !== undefined ? routeAuth.roles : routeAuth);
-
-  if (routeAuth && (routeAuth === true || routeAuth.constructor === Array || isObject(routeAuth))) {
-    if (!__auth.check()) {
-      __auth.transitionRedirectType = 401;
-
-      if (typeof authRedirect === 'function') {
-        authRedirect = authRedirect(transition);
-      }
-
-      cb.call(__auth, authRedirect);
-    } else if ((routeAuth.constructor === Array || isObject(routeAuth)) && !compare(routeAuth, __auth.$vm.state.data[__auth.options.rolesKey])) {
-      __auth.transitionRedirectType = 403;
-
-      if (typeof forbiddenRedirect === 'function') {
-        forbiddenRedirect = forbiddenRedirect(transition);
-      }
-
-      cb.call(__auth, forbiddenRedirect);
-    } else {
-      __auth.$vm.state.redirect = __auth.transitionRedirectType ? {
-        type: __auth.transitionRedirectType,
-        from: __auth.transitionPrev,
-        to: __auth.transitionThis
-      } : null;
-      __auth.transitionRedirectType = null;
-      return cb();
-    }
-  } else if (routeAuth === false && __auth.check()) {
-    __auth.transitionRedirectType = 404;
-
-    if (typeof notFoundRedirect === 'function') {
-      notFoundRedirect = notFoundRedirect(transition);
-    }
-
-    cb.call(__auth, notFoundRedirect);
-  } else {
-    __auth.$vm.state.redirect = __auth.transitionRedirectType ? {
-      type: __auth.transitionRedirectType,
-      from: __auth.transitionPrev,
-      to: __auth.transitionThis
-    } : null;
-    __auth.transitionRedirectType = null;
-    return cb();
-  }
-}
-
-function _processFetch(data, redirect) {
-  _setUser(data);
-
-  _setAuthenticated(true);
-
-  _processRedirect(redirect);
-}
-
-function _processLogout(redirect) {
-  remove.call(__auth, __auth.options.tokenImpersonateKey);
-
-  remove.call(__auth, __auth.options.tokenDefaultKey);
-
-  remove$2.call(__auth, __auth.options.tokenImpersonateKey);
-
-  remove$2.call(__auth, __auth.options.tokenDefaultKey);
-
-  remove$2.call(__auth, __auth.options.staySignedInKey);
-
-  __auth.$vm.state.loaded = true;
-  __auth.$vm.state.authenticated = false;
-  __auth.$vm.state.data = null;
-
-  _processRedirect(redirect);
-}
-
-function _processImpersonate(defaultToken, redirect) {
-  set$2.call(__auth, __auth.options.tokenImpersonateKey, __auth.token(), get$2.call(__auth, __auth.options.staySignedInKey) ? false : true);
-
-  set$2.call(__auth, __auth.options.tokenDefaultKey, defaultToken, get$2.call(__auth, __auth.options.staySignedInKey) ? false : true);
-
-  __auth.$vm.state.impersonating = true;
-
-  _processRedirect(redirect);
-}
-
-function _processUnimpersonate(redirect) {
-  remove$2.call(__auth, __auth.options.tokenImpersonateKey);
-
-  __auth.$vm.state.impersonating = false;
-
-  _processRedirect(redirect);
-}
-
-function _processRedirect(redirect) {
-  if (redirect) {
-    __auth.drivers.router.routerGo.call(__auth, redirect);
-  }
-}
-
-function _initVm(Vue) {
-  __auth.$vm = new Vue({
-    data: function () {
-      return {
-        state: {
-          data: null,
-          loaded: false,
-          redirect: null,
-          authenticated: null,
-          // TODO: false ?
-          impersonating: undefined,
-          remember: undefined
-        }
-      };
-    }
-  });
-}
-
-function _initDriverCheck() {
-  var msg;
-  var i, ii;
-  var drivers = ['auth', 'http', 'router'];
-
-  for (i = 0, ii = drivers.length; i < ii; i++) {
-    if (!__auth.drivers[drivers[i]]) {
-      console.error('Error (@websanova/vue-auth): "' + drivers[i] + '" driver must be set.');
-      return false;
-    }
-
-    if (__auth.drivers[drivers[i]].init) {
-      msg = __auth.drivers[drivers[i]].init.call(__auth);
-
-      if (msg) {
-        console.error('Error (@websanova/vue-auth): ' + msg);
-        return false;
-      }
-    }
-  }
-}
-
-function _initRefreshInterval() {
-  if (__auth.options.refreshData.enabled && __auth.options.refreshData.interval > 0) {
-    setInterval(function () {
-      if (__auth.options.refreshData.enabled && !_isTokenExpired()) {
-        __auth.refresh();
-      }
-    }, __auth.options.refreshData.interval * 1000 * 60); // In minutes.
-  }
-}
-
-function _initInterceptors() {
-  __auth.drivers.http.interceptor.call(__auth, _parseRequestIntercept, _parseResponseIntercept);
-
-  __auth.drivers.router.beforeEach.call(__auth, _processRouterBeforeEach, _processTransitionEach, _setTransitions, _getAuthMeta);
-}
-
-function Auth(Vue, options) {
-  __auth = this;
-  options = options || {};
-  this.plugins = options.plugins;
-  this.drivers = options.drivers;
-  this.options = extend(__defaultOptions, options.options);
-  delete options.plugins;
-  delete options.drivers;
-  delete options.options; // Init vars.
-
-  this.currentToken = null;
-  this.transitionPrev = null;
-  this.transitionThis = null;
-  this.transitionRedirectType = null;
-
-  _initDriverCheck();
-
-  _initVm(Vue);
-
-  _initRefreshInterval();
-
-  _initInterceptors();
-}
-
-Auth.prototype.ready = function () {
-  return __auth.$vm.state.loaded;
-};
-
-Auth.prototype.load = function () {
-  return new Promise(function (resolve) {
-    var timer = null;
-    timer = setInterval(function () {
-      if (__auth.$vm.state.loaded) {
-        clearInterval(timer);
-        resolve();
-      }
-    }, 50);
-  });
-};
-
-Auth.prototype.redirect = function () {
-  return __auth.$vm.state.redirect;
-};
-
-Auth.prototype.user = function (data) {
-  if (data !== undefined) {
-    _processFetch(data);
-  }
-
-  return __auth.$vm.state.data;
-};
-
-Auth.prototype.check = function (role, key) {
-  return _isAccess(role, key);
-};
-
-Auth.prototype.impersonating = function () {
-  var impersonating = get$2.call(__auth, __auth.options.tokenImpersonateKey) ? true : false;
-
-  if (__auth.$vm.state.impersonating === undefined) {
-    __auth.$vm.state.impersonating = impersonating;
-  }
-
-  return __auth.$vm.state.impersonating;
-};
-
-Auth.prototype.token = function (name, token, expires) {
-  if (token !== undefined) {
-    if (token === null) {
-      remove$2.call(__auth, name);
-    } else {
-      expires = expires === true || expires === false ? expires : get$2.call(__auth, __auth.options.staySignedInKey) ? false : true;
-
-      set$2.call(__auth, name, token, expires);
-    }
-  }
-
-  return get$2.call(__auth, name);
-};
-
-Auth.prototype.fetch = function (data) {
-  data = extend(__auth.options.fetchData, data);
-  return new Promise(function (resolve, reject) {
-    __auth.drivers.http.http.call(__auth, data).then(function (res) {
-      _processFetch(_parseUserResponseData(res), data.redirect);
-
-      resolve(res);
-    }, reject);
-  });
-};
-
-Auth.prototype.refresh = function (data) {
-  data = extend(__auth.options.refreshData, data);
-  return __auth.drivers.http.http.call(__auth, data);
-};
-
-Auth.prototype.register = function (data) {
-  var registerData = extend(__auth.options.registerData, data);
-
-  if (registerData.autoLogin !== true) {
-    _setRemember(registerData.remember);
-
-    _setStaySignedIn(registerData.staySignedIn);
-  }
-
-  return new Promise(function (resolve, reject) {
-    __auth.drivers.http.http.call(__auth, registerData).then(function (res) {
-      var loginData;
-
-      if (registerData.autoLogin) {
-        loginData = extend(__auth.options.loginData, data);
-
-        __auth.login(loginData).then(resolve, reject);
-      } else {
-        resolve(res);
-
-        _processRedirect(registerData.redirect);
-      }
-    }, reject);
-  });
-};
-
-Auth.prototype.login = function (data) {
-  data = extend(__auth.options.loginData, data);
-
-  _setRemember(data.remember);
-
-  _setStaySignedIn(data.staySignedIn);
-
-  return new Promise(function (resolve, reject) {
-    __auth.drivers.http.http.call(__auth, data).then(function (res) {
-      if (data.fetchUser || data.fetchUser === undefined && __auth.options.fetchData.enabled) {
-        __auth.fetch({
-          redirect: data.redirect
-        }).then(resolve, reject);
-      } else {
-        _processFetch(_parseUserResponseData(res), data.redirect);
-
-        resolve(res);
-      }
-    }, function (res) {
-      _setAuthenticated(false);
-
-      reject(res);
-    });
-  });
-};
-
-Auth.prototype.remember = function (val) {
-  if (val) {
-    _setRemember(val);
-  }
-
-  var remember = _getRemember();
-
-  if (__auth.$vm.state.remember === undefined) {
-    __auth.$vm.state.remember = remember;
-  }
-
-  return __auth.$vm.state.remember;
-};
-
-Auth.prototype.unremember = function () {
-  _setRemember(null);
-};
-
-Auth.prototype.logout = function (data) {
-  data = extend(__auth.options.logoutData, data);
-  return new Promise(function (resolve, reject) {
-    if (data.makeRequest) {
-      __auth.drivers.http.http.call(__auth, data).then(function (res) {
-        _processLogout(data.redirect);
-
-        resolve(res);
-      }, reject);
-    } else {
-      _processLogout(data.redirect);
-
-      resolve();
-    }
-  });
-};
-
-Auth.prototype.impersonate = function (data) {
-  data = extend(__auth.options.impersonateData, data);
-  return new Promise(function (resolve, reject) {
-    var token = __auth.token();
-
-    __auth.drivers.http.http.call(__auth, data).then(function (res) {
-      _processImpersonate(token);
-
-      if (data.fetchUser || data.fetchUser === undefined && __auth.options.fetchData.enabled) {
-        __auth.fetch({
-          redirect: data.redirect
-        }).then(resolve, reject);
-      } else {
-        _processRedirect(data.redirect);
-
-        resolve(res);
-      }
-    }, reject);
-  });
-};
-
-Auth.prototype.unimpersonate = function (data) {
-  data = extend(__auth.options.unimpersonateData, data);
-  return new Promise(function (resolve, reject) {
-    if (data.makeRequest) {
-      __auth.drivers.http.http.call(__auth, data).then(resolve, reject);
-    } else {
-      resolve();
-    }
-  }).then(function () {
-    return new Promise(function (resolve, reject) {
-      _processUnimpersonate();
-
-      if (data.fetchUser || data.fetchUser === undefined && __auth.options.fetchData.enabled) {
-        __auth.fetch({
-          redirect: data.redirect
-        }).then(resolve, reject);
-      } else {
-        _processRedirect(data.redirect);
-
-        resolve();
-      }
-    });
-  });
-};
-
-Auth.prototype.oauth2 = function (type, data) {
-  var key,
-      params = '';
-
-  if (data.code) {
-    try {
-      if (data.state) {
-        data.state = JSON.parse(decodeURIComponent(data.state));
-      }
-    } catch (e) {
-      console.error('vue-auth:error There was an issue retrieving the state data.');
-      data.state = data.state || {};
-    }
-
-    data = extend(__auth.options.oauth2Data, [data.state, data]);
-    delete data.code;
-    delete data.state;
-    delete data.params;
-    return __auth.login(data);
-  }
-
-  data = extend(__auth.drivers.oauth2[type], data);
-  data.params.state = JSON.stringify(data.params.state || {});
-  data.params.redirect_uri = _parseRedirectUri(data.params.redirect_uri);
-
-  for (key in data.params) {
-    params += '&' + key + '=' + encodeURIComponent(data.params[key]);
-  }
-
-  window.open(data.url + '?' + params.substring(), (data.window || {}).name || '_self', (data.window || {}).specs || {}, (data.window || {}).replace !== false);
-};
-
-Auth.prototype.enableImpersonate = function () {
-  if (__auth.impersonating()) {
-    __auth.currentToken = null;
-  }
-};
-
-Auth.prototype.disableImpersonate = function () {
-  if (__auth.impersonating()) {
-    __auth.currentToken = __auth.options.tokenDefaultKey;
-  }
-};
-
-const authKey = 'auth'; // NOTE: Create pseudo Vue object for Vue 2 backwards compatibility.
-
-function Vue(obj) {
-  var data = obj.data();
-  this.state = Object(vue__WEBPACK_IMPORTED_MODULE_0__["reactive"])(data.state);
-}
-
-Auth.prototype.install = function (app, key) {
-  app.provide(key || authKey, this);
-  app.config.globalProperties.$auth = this;
-}; //
-
-
-function createAuth(options) {
-  return new Auth(Vue, options);
-}
-function useAuth(key) {
-  return Object(vue__WEBPACK_IMPORTED_MODULE_0__["inject"])(key ? key : authKey);
-}
-
-
-
-
-/***/ }),
-
 /***/ "./node_modules/@websanova/vue-auth/drivers/auth/bearer.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/@websanova/vue-auth/drivers/auth/bearer.js ***!
@@ -1278,6 +252,780 @@ module.exports = {
     }
 
 };
+
+/***/ }),
+
+/***/ "./node_modules/@websanova/vue-auth/src/auth.js":
+/*!******************************************************!*\
+  !*** ./node_modules/@websanova/vue-auth/src/auth.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __utils  = __webpack_require__(/*! ./lib/utils.js */ "./node_modules/@websanova/vue-auth/src/lib/utils.js"),
+    __token  = __webpack_require__(/*! ./lib/token.js */ "./node_modules/@websanova/vue-auth/src/lib/token.js"),
+    __cookie = __webpack_require__(/*! ./lib/cookie.js */ "./node_modules/@websanova/vue-auth/src/lib/cookie.js")
+
+module.exports = function () {
+
+    // Private (used double underscore __).
+
+    var __transitionPrev = null,
+        __transitionThis = null,
+        __transitionRedirecType = null;
+
+    function __duckPunch(methodName, data) {
+        var _this = this,
+            success = data.success;
+
+        data = __utils.extend(this.options[methodName + 'Data'], [data]);
+
+        data.success = function (res) {
+            data.success = success;
+
+            _this.options[methodName + 'Process'].call(_this, res, data);
+        };
+
+        this.options.http._http.call(this, data);
+    }
+
+    function __bindContext(methodName, data) {
+        var _auth = this.$auth;
+
+        _auth.options[methodName + 'Perform'].call(_auth, _auth.options.router._bindData.call(_auth, data, this));
+    }
+
+    // Overrideable
+
+    function _routerBeforeEach(cb) {
+        if (this.watch.authenticated && !__token.get.call(this)) {
+            this.options.logoutProcess.call(this, null, {});
+        }
+
+        if (this.options.refreshData.enabled && this.options.tokenExpired.call(this)) {
+            this.options.refreshPerform.call(this, {});
+        }
+
+        if (this.watch.authenticated === null && __token.get.call(this)) {
+            if ( ! __cookie.exists.call(this)) {
+                this.options.logoutProcess.call(this, null, {});
+
+                this.watch.loaded = true
+
+                return cb.call(this);
+            }
+
+            this.watch.authenticated = false
+            if (this.options.fetchData.enabled) {
+                this.options.fetchPerform.call(this, {success: cb, error: cb});
+            }
+        } else {
+            this.watch.loaded = true;
+            return cb.call(this);
+        }
+    }
+
+    function _transitionEach(transition, routeAuth, cb) {
+        routeAuth = __utils.toArray(routeAuth);
+        
+        __transitionPrev = __transitionThis;
+        __transitionThis = transition;
+        
+        if (routeAuth && (routeAuth === true || routeAuth.constructor === Array)) {
+            if ( ! this.check()) {
+                __transitionRedirecType = 401;
+                cb.call(this, this.options.authRedirect);
+            }
+            else if (routeAuth.constructor === Array && ! __utils.compare(routeAuth, this.watch.data[this.options.rolesVar])) {
+                __transitionRedirecType = 403;
+                cb.call(this, this.options.forbiddenRedirect);
+            }
+            else {
+                this.watch.redirect = __transitionRedirecType ? {type: __transitionRedirecType, from: __transitionPrev, to: __transitionThis} : null;
+                __transitionRedirecType = null;
+
+                return cb();
+            }
+        }
+        else if (routeAuth === false && this.check()) {
+            __transitionRedirecType = 404;
+            cb.call(this, this.options.notFoundRedirect);
+        }
+        else {
+            this.watch.redirect = __transitionRedirecType ? {type: __transitionRedirecType, from: __transitionPrev, to: __transitionThis} : null;
+            __transitionRedirecType = null;
+
+            return cb();
+        }
+    }
+
+    function _requestIntercept(req) {
+        var token = __token.get.call(this);
+
+        if (token) {
+            this.options.auth.request.call(this, req, token);
+        }
+
+        return req;
+    }
+
+    function _responseIntercept(res) {
+        var token;
+
+        if (this.watch.authenticated && this.options.http._invalidToken) {
+            this.options.http._invalidToken.call(this, res);
+        }
+
+        token = this.options.auth.response.call(this, res);
+
+        if (token) {
+            __token.set.call(this, null, token);
+        }
+    }
+
+    function _parseUserData(data) {
+        return data.data;
+    }
+
+    function _parseOauthState(data) {
+        return JSON.parse(decodeURIComponent(data));
+    }
+
+    function _check(role) {
+        if (this.watch.authenticated === true) {
+            if (role) {
+                return __utils.compare(role, this.watch.data[this.options.rolesVar]);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    function _tokenExpired () {
+        return ! this.watch.loaded && __token.get.call(this);
+    }
+
+    function _cookieDomain () {
+        return window.location.hostname;
+    }
+
+    function _getUrl () {
+        var port = window.location.port
+
+        return window.location.protocol + '//' + window.location.hostname + (port ? ':' + port : '')
+    }
+
+    function _fetchPerform(data) {
+        var _this = this,
+            error = data.error;
+
+        data.error = function (res) {
+            _this.watch.loaded = true;
+
+            if (error) { error.call(_this, res); }
+        };
+
+        if (this.watch.authenticated !== true && !this.options.loginData.fetchUser) {
+            _fetchProcess.call(this, {}, data);
+        }
+        else {
+            __duckPunch.call(this, 'fetch', data);
+        }
+    }
+
+    function _fetchProcess(res, data) {
+        this.watch.authenticated = true;
+        this.watch.data = this.options.parseUserData.call(this, this.options.http._httpData.call(this, res));
+        this.watch.loaded = true;
+
+        if (data.success) { data.success.call(this, res); }
+    }
+
+    function _refreshPerform(data) {
+        __duckPunch.call(this, 'refresh', data);
+    }
+
+    function _refreshProcess(res, data) {
+        if (data.success) { data.success.call(this, res); }
+    }
+
+    function _registerPerform(data) {
+        __duckPunch.call(this, 'register', data);
+    }
+
+    function _registerProcess(res, data) {
+        if (data.autoLogin === true) {
+            data = __utils.extend(data, [this.options.loginData]);
+
+            this.options.loginPerform.call(this, data);
+        }
+        else {
+            if (data.success) { data.success.call(this, res); }
+
+            if (data.redirect) {
+                this.options.router._routerGo.call(this, data.redirect);
+            }
+        }
+    }
+
+    function _loginPerform(data) {
+        __duckPunch.call(this, 'login', data);
+    }
+
+    function _loginProcess(res, data) {
+        var _this = this;
+
+        __cookie.set.call(this, data.rememberMe);
+
+        this.authenticated = null;
+
+        this.options.fetchPerform.call(this, {
+            success: function () {
+                if (data.success) { data.success.call(this, res); }
+
+                if (data.redirect && _this.options.check.call(_this)) {
+                    _this.options.router._routerGo.call(_this, data.redirect);
+                }
+            }
+        });
+    }
+
+    function _logoutPerform(data) {
+        data = __utils.extend(this.options.logoutData, [data || {}]);
+
+        if (data.makeRequest) {
+            __duckPunch.call(this, 'logout', data);
+        }
+        else {
+            this.options.logoutProcess.call(this, null, data);
+        }
+    }
+
+    function _logoutProcess(res, data) {
+        __cookie.delete.call(this);
+
+        __token.delete.call(this, 'other');
+        __token.delete.call(this, 'default');
+
+        this.watch.authenticated = false;
+        this.watch.data = null;
+
+        if (data.success) { data.success.call(this, res, data); }
+
+        if (data.redirect) {
+            this.options.router._routerGo.call(this, data.redirect);
+        }
+    }
+
+    function _loginOtherPerform(data) {
+        var success,
+            token = this.token.call(this); // (admin) token
+
+        data = data || {};
+
+        success = data.success;
+
+        data.success = function () {
+
+            // Reshuffle tokens here...
+            __token.set.call(this, 'other', this.token.call(this));
+            __token.set.call(this, 'default', token);
+
+            if (success) { success.call(this); }
+        };
+
+        __duckPunch.call(this, 'loginOther', data);
+    }
+
+    function _loginOtherProcess(res, data) {
+        var _this = this;
+
+        this.options.fetchPerform.call(this, {
+            success: function () {
+                if (data.success) { data.success.call(this, res); }
+
+                if (data.redirect && _this.options.check.call(_this)) {
+                    _this.options.router._routerGo.call(_this, data.redirect);
+                }
+            }
+        });
+    }
+
+    function _logoutOtherPerform(data) {
+        data = __utils.extend(this.options.logoutOtherData, [data || {}]);
+
+        if (data.makeRequest) {
+            __duckPunch.call(this, 'logoutOther', data);
+        }
+        else {
+            this.options.logoutOtherProcess.call(this, null, data);
+        }
+    }
+
+    function _logoutOtherProcess(res, data) {
+        __token.delete.call(this, 'other');
+
+        this.options.fetchPerform.call(this, {
+            success: function () {
+                if (data.success) { data.success.call(this, res, data); }
+
+                if (data.redirect) {
+                    this.options.router._routerGo.call(this, data.redirect);
+                }
+            }
+        });
+    }
+
+    function _oauth2Perform(data) {
+        var state = {},
+            params = '',
+            query = {};
+
+        if (data.code === true) {
+            data = __utils.extend(this.options[data.provider + 'Data'], [data]);
+
+            try {
+                if (data.query.state) {
+                    state = this.options.parseOauthState(data.query.state);
+                }
+            }
+            catch (e) {
+                console.error('vue-auth:error There was an issue retrieving the state data.');
+                state = {};
+            }
+
+            data.rememberMe = state.rememberMe === true;
+            data.state = state;
+
+            this.options.loginPerform.call(this, data);
+        } else {
+            data = __utils.extend(this.options[data.provider + 'Oauth2Data'], [data]);
+
+            data.redirect = data.redirect.call(this);
+
+            data.state = data.state || {};
+            data.state.rememberMe = data.rememberMe === true;
+
+            params = '?client_id=' + data.clientId + '&redirect_uri=' + data.redirect + '&scope=' + data.scope + '&response_type=code&state=' + encodeURIComponent(JSON.stringify(data.state));
+
+            window.location = data.url + params;
+        }
+    }
+
+    var defaultOptions = {
+
+        // Variables
+
+        rolesVar:          'roles',
+        tokenName:         'auth-token',
+        
+        // Objects
+
+        authRedirect:       {path: '/login'},
+        forbiddenRedirect:  {path: '/403'},
+        notFoundRedirect:   {path: '/404'},
+
+        registerData:       {url: 'auth/register',     method: 'POST', redirect: '/login'},
+        loginData:          {url: 'auth/login',        method: 'POST', redirect: '/', fetchUser: true},
+        logoutData:         {url: 'auth/logout',       method: 'POST', redirect: '/', makeRequest: false},
+        oauth1Data:         {url: 'auth/login',        method: 'POST'},
+        fetchData:          {url: 'auth/user',         method: 'GET', enabled: true},
+        refreshData:        {url: 'auth/refresh',      method: 'GET', enabled: true},
+        loginOtherData:     {url: 'auth/login-other',  method: 'POST', redirect: '/'},
+        logoutOtherData:    {url: 'auth/logout-other', method: 'POST', redirect: '/admin', makeRequest: false},
+
+        facebookData:       {url: 'auth/facebook',     method: 'POST', redirect: '/'},
+        googleData:         {url: 'auth/google',       method: 'POST', redirect: '/'},
+
+        facebookOauth2Data: {
+            url: 'https://www.facebook.com/v2.5/dialog/oauth',
+            redirect: function () { return this.options.getUrl() + '/login/facebook'; },
+            clientId: '',
+            scope: 'email'
+        },
+        googleOauth2Data: {
+            url: 'https://accounts.google.com/o/oauth2/auth',
+            redirect: function () { return this.options.getUrl() + '/login/google'; },
+            clientId: '',
+            scope: 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read'
+        },
+
+        // Internal
+
+        getUrl:             _getUrl,
+        cookieDomain:       _cookieDomain,
+        parseUserData:      _parseUserData,
+        parseOauthState:    _parseOauthState,
+        tokenExpired:       _tokenExpired,
+        check:              _check,
+
+        transitionEach:     _transitionEach,
+        routerBeforeEach:   _routerBeforeEach,
+        requestIntercept:   _requestIntercept,
+        responseIntercept:  _responseIntercept,
+
+        // Contextual
+
+        registerPerform:    _registerPerform,
+        registerProcess:    _registerProcess,
+
+        loginPerform:       _loginPerform,
+        loginProcess:       _loginProcess,
+
+        logoutPerform:      _logoutPerform,
+        logoutProcess:      _logoutProcess,
+
+        fetchPerform:       _fetchPerform,
+        fetchProcess:       _fetchProcess,
+
+        refreshPerform:     _refreshPerform,
+        refreshProcess:     _refreshProcess,
+
+        loginOtherPerform:  _loginOtherPerform,
+        loginOtherProcess:  _loginOtherProcess,
+
+        logoutOtherPerform: _logoutOtherPerform,
+        logoutOtherProcess: _logoutOtherProcess,
+
+        oauth2Perform:      _oauth2Perform
+    };
+
+    function Auth(Vue, options) {
+        var i, ii, msg, drivers = ['auth', 'http', 'router'];
+        
+        this.currentToken = null;
+
+        this.options = __utils.extend(defaultOptions, [options || {}]);
+        this.options.Vue = Vue;
+
+        this.watch = new this.options.Vue({
+            data: function () {
+                return {
+                    data: null,
+                    loaded: false,
+                    redirect: null,
+                    authenticated: null
+                };
+            }
+        });
+
+        for (i = 0, ii = drivers.length; i < ii; i++) {
+            if ( ! this.options[drivers[i]]) {
+                console.error('Error (@websanova/vue-auth): "' + drivers[i] + '" driver must be set.');
+                return;
+            }
+
+            if (this.options[drivers[i]]._init) {
+                msg = this.options[drivers[i]]._init.call(this);
+
+                if (msg) {
+                    console.error('Error (@websanova/vue-auth): ' + msg);
+                    return;
+                }
+            }
+        }
+
+        // Init interceptors.
+        this.options.router._beforeEach.call(this, this.options.routerBeforeEach, this.options.transitionEach);
+        this.options.http._interceptor.call(this, this.options.requestIntercept, this.options.responseIntercept);
+    }
+
+    Auth.prototype.ready = function () {
+        return this.watch.loaded;
+    };
+
+    Auth.prototype.redirect = function () {
+        return this.watch.redirect;
+    };
+
+    Auth.prototype.user = function (data) {
+        if (data) {
+            this.watch.data = data;
+        }
+
+        return this.watch.data || {};
+    };
+
+    Auth.prototype.check = function (role) {
+        return this.options.check.call(this, role);
+    };
+
+    Auth.prototype.other = function () {
+        this.watch.data; // To fire watch
+
+        return __token.get.call(this, 'other') ? true : false;
+    };
+
+    Auth.prototype.enableOther = function (data) {
+        if (this.other()) {
+            this.currentToken = null;
+        }
+    };
+
+    Auth.prototype.disableOther = function (data) {
+        if (this.other()) {
+            this.currentToken = 'default';
+        }
+    };
+
+    Auth.prototype.token = function (name) {
+        return __token.get.call(this, name);
+    };
+
+    Auth.prototype.fetch = function (data) {
+        __bindContext.call(this, 'fetch', data);
+    };
+
+    Auth.prototype.refresh = function (data) {
+        __bindContext.call(this, 'refresh', data);
+    };
+
+    Auth.prototype.register = function (data) {
+        __bindContext.call(this, 'register', data);
+    };
+
+    Auth.prototype.login = function (data) {
+        __bindContext.call(this, 'login', data);
+    };
+
+    Auth.prototype.logout = function (data) {
+        __bindContext.call(this, 'logout', data);
+    };
+
+    Auth.prototype.loginOther = function (data) {
+        __bindContext.call(this, 'loginOther', data);
+    };
+
+    Auth.prototype.logoutOther = function (data) {
+        __bindContext.call(this, 'logoutOther', data);
+    };
+
+    Auth.prototype.oauth2 = function (data) {
+        __bindContext.call(this, 'oauth2', data);
+    }    
+
+    return Auth;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/@websanova/vue-auth/src/index.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@websanova/vue-auth/src/index.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Auth = __webpack_require__(/*! ./auth.js */ "./node_modules/@websanova/vue-auth/src/auth.js")();
+
+module.exports = (function () {
+
+    return function install(Vue, options) {
+        
+        var auth = new Auth(Vue, options);
+
+        var login = auth.login;
+        var fetch = auth.fetch;
+        var logout = auth.logout;
+        var oauth2 = auth.oauth2;
+        var refresh = auth.refresh;
+        var register = auth.register;
+        var loginOther = auth.loginOther;
+        var logoutOther = auth.logoutOther;
+
+        Object.defineProperties(Vue.prototype, {
+            $auth: {
+                get: function () {
+                    auth.login = login.bind(this);
+                    auth.fetch = fetch.bind(this);
+                    auth.logout = logout.bind(this);
+                    auth.oauth2 = oauth2.bind(this);
+                    auth.refresh = refresh.bind(this);
+                    auth.register = register.bind(this);
+                    auth.loginOther = loginOther.bind(this);
+                    auth.logoutOther = logoutOther.bind(this);
+
+                    return auth;
+                }
+            }
+        });
+    }
+})();
+
+/***/ }),
+
+/***/ "./node_modules/@websanova/vue-auth/src/lib/cookie.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@websanova/vue-auth/src/lib/cookie.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = (function () {
+
+    function setCookie (name, value, timeOffset) {
+        var domain = this.options.cookieDomain(),
+            expires = (new Date((new Date()).getTime() + timeOffset)).toUTCString();
+
+        document.cookie = (name + '=' + value + '; domain=' + domain + '; path=/;' + (timeOffset ? ' expires=' + expires + ';' : ''));
+    }
+
+    return {
+        set: function(rememberMe) {
+            setCookie.call(this,
+                'rememberMe',
+                rememberMe === true ? 'true' : 'false',
+                rememberMe === true ? 12096e5 : undefined
+            );
+        },
+
+        exists: function(name) {
+            return document.cookie.match(/rememberMe/);
+        },
+
+        delete: function(name) {
+            setCookie.call(this, 'rememberMe', 'false', -12096e5);
+        }
+    };
+
+})();
+
+/***/ }),
+
+/***/ "./node_modules/@websanova/vue-auth/src/lib/token.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/@websanova/vue-auth/src/lib/token.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = (function () {
+
+    function tokenName(name) {
+        name = name || this.currentToken;
+
+        if ( ! name && this.other.call(this)) { name = 'other'; }
+        else if ( ! name || name === 'default') { name = 'default'; }
+
+        return name + '-' + this.options.tokenName;
+    }
+
+    return {
+        get: function (name) {
+            name = tokenName.call(this, name);
+
+            return localStorage.getItem(name);
+        },
+
+        set: function (name, token) {
+            name = tokenName.call(this, name);
+
+            if (token) {
+                localStorage.setItem(name, token);
+            }
+        },
+
+        delete: function (name) {
+            name = tokenName.call(this, name);
+
+            localStorage.removeItem(name);
+        },
+
+        expiring: function () {
+            return false;
+        }
+    }
+
+})();
+
+/***/ }),
+
+/***/ "./node_modules/@websanova/vue-auth/src/lib/utils.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/@websanova/vue-auth/src/lib/utils.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = (function (){
+
+    function isObject(val) {
+        if (val !== null && typeof val === 'object' && val.constructor !== Array ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function toArray(val) {
+        return (typeof val) === 'string' || (typeof val) === 'number' ? [val] : val;
+    }
+
+    function extend(mainObj, appendObj) {
+        var i, ii, key, data = {};
+
+        for (key in mainObj) {
+            if (isObject(mainObj[key])) {
+                data[key] = extend(mainObj[key], {});
+            }
+            else {
+                data[key] = mainObj[key];
+            }
+        }
+
+        for (i = 0, ii = appendObj.length; i < ii; i++) {
+            for (key in appendObj[i]) {
+                if (isObject(appendObj[i][key])) {
+                    data[key] = extend(mainObj[key] || {}, [appendObj[i][key]]);
+                }
+                else  {
+                    data[key] = appendObj[i][key];
+                }
+            }
+        }
+
+        return data;
+    }
+
+    function compare(one, two) {
+        var i, ii, key;
+
+        if (Object.prototype.toString.call(one) === '[object Object]' && Object.prototype.toString.call(two) === '[object Object]') {
+            for (key in one) {
+                if (compare(one[key], two[key])) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        one = toArray(one);
+        two = toArray(two);
+
+        if (one.constructor !== Array || two.constructor !== Array) {
+            return false;
+        }
+
+        for (i = 0, ii = one.length; i < ii; i++) {
+            if (two.indexOf(one[i]) >= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    return {
+        extend: extend,
+        toArray: toArray,
+        compare: compare
+    };
+})();
+
 
 /***/ }),
 
@@ -56197,17 +55945,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_bootstrap__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _websanova_vue_auth__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @websanova/vue-auth */ "./node_modules/@websanova/vue-auth/dist/v3/vue-auth.esm.js");
-/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-axios */ "./node_modules/vue-axios/dist/vue-axios.es5.js");
-/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _Index__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Index */ "./resources/js/Index.vue");
-/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./auth */ "./resources/js/auth.js");
-/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./router */ "./resources/js/router.js");
+/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-axios */ "./node_modules/vue-axios/dist/vue-axios.es5.js");
+/* harmony import */ var vue_axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_axios__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var _Index__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Index */ "./resources/js/Index.vue");
+/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./auth */ "./resources/js/auth.js");
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./router */ "./resources/js/router.js");
 
 
 
-
+ //import VueAuth from "@websanova/vue-auth";
 
 
 
@@ -56217,19 +55964,19 @@ __webpack_require__.r(__webpack_exports__);
 
 window.Vue = vue__WEBPACK_IMPORTED_MODULE_3___default.a; // Set Vue router
 
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.http.options.root = "".concat("http://127.0.0.1:8001", "/api");
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = _router__WEBPACK_IMPORTED_MODULE_9__["default"];
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = new vue_router__WEBPACK_IMPORTED_MODULE_6__["default"](); //Vue.use(VueRouter);
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = _router__WEBPACK_IMPORTED_MODULE_8__["default"];
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.router = new vue_router__WEBPACK_IMPORTED_MODULE_5__["default"]();
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.http.options.root = "".concat("http://127.0.0.1:8001", "/api"); //Vue.use(VueRouter);
 // Set Vue authentication
 
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_axios__WEBPACK_IMPORTED_MODULE_5___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a); //axios.defaults.baseURL = `${process.env.MIX_APP_URL}/api`;
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_axios__WEBPACK_IMPORTED_MODULE_4___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a); //axios.defaults.baseURL = `${process.env.MIX_APP_URL}/api`;
 
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(__webpack_require__(/*! @websanova/vue-auth */ "./node_modules/@websanova/vue-auth/dist/v3/vue-auth.esm.js"), _auth__WEBPACK_IMPORTED_MODULE_8__["default"]); // Load Index
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(__webpack_require__(/*! @websanova/vue-auth */ "./node_modules/@websanova/vue-auth/src/index.js"), _auth__WEBPACK_IMPORTED_MODULE_7__["default"]); // Load Index
 
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.component("index", _Index__WEBPACK_IMPORTED_MODULE_7__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.component("index", _Index__WEBPACK_IMPORTED_MODULE_6__["default"]);
 var app = new vue__WEBPACK_IMPORTED_MODULE_3___default.a({
   el: "#app",
-  router: _router__WEBPACK_IMPORTED_MODULE_9__["default"]
+  router: _router__WEBPACK_IMPORTED_MODULE_8__["default"]
 });
 
 /***/ }),
@@ -56243,12 +55990,12 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_3___default.a({
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _websanova_vue_auth_drivers_auth_bearer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @websanova/vue-auth/drivers/auth/bearer.js */ "./node_modules/@websanova/vue-auth/drivers/auth/bearer.js");
-/* harmony import */ var _websanova_vue_auth_drivers_auth_bearer_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_websanova_vue_auth_drivers_auth_bearer_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @websanova/vue-auth/drivers/http/axios.1.x.js */ "./node_modules/@websanova/vue-auth/drivers/http/axios.1.x.js");
-/* harmony import */ var _websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @websanova/vue-auth/drivers/router/vue-router.2.x.js */ "./node_modules/@websanova/vue-auth/drivers/router/vue-router.2.x.js");
-/* harmony import */ var _websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _websanova_vue_auth_drivers_auth_bearer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @websanova/vue-auth/drivers/auth/bearer.js */ "./node_modules/@websanova/vue-auth/drivers/auth/bearer.js");
+/* harmony import */ var _websanova_vue_auth_drivers_auth_bearer_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_websanova_vue_auth_drivers_auth_bearer_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @websanova/vue-auth/drivers/http/axios.1.x.js */ "./node_modules/@websanova/vue-auth/drivers/http/axios.1.x.js");
+/* harmony import */ var _websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @websanova/vue-auth/drivers/router/vue-router.2.x.js */ "./node_modules/@websanova/vue-auth/drivers/router/vue-router.2.x.js");
+/* harmony import */ var _websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_2__);
 
 
  // Auth base configuration some of this options
@@ -56256,8 +56003,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var config = {
   auth: __webpack_require__(/*! @websanova/vue-auth/drivers/auth/bearer.js */ "./node_modules/@websanova/vue-auth/drivers/auth/bearer.js"),
-  http: _websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_2___default.a,
-  router: _websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_3___default.a,
+  http: _websanova_vue_auth_drivers_http_axios_1_x_js__WEBPACK_IMPORTED_MODULE_1___default.a,
+  router: _websanova_vue_auth_drivers_router_vue_router_2_x_js__WEBPACK_IMPORTED_MODULE_2___default.a,
   tokenDefaultName: "mini crm",
   tokenStore: ["localStorage"],
   rolesVar: "role",
@@ -56767,7 +56514,7 @@ var routes = [{
   name: "home",
   component: _pages_Home__WEBPACK_IMPORTED_MODULE_1__["default"],
   meta: {
-    auth: false
+    auth: undefined
   }
 }, {
   path: "/register",

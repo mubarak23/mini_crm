@@ -2,7 +2,7 @@ import "es6-promise/auto";
 import axios from "axios";
 import "./bootstrap";
 import Vue from "vue";
-import VueAuth from "@websanova/vue-auth";
+//import VueAuth from "@websanova/vue-auth";
 import VueAxios from "vue-axios";
 import VueRouter from "vue-router";
 import Index from "./Index";
@@ -11,9 +11,10 @@ import router from "./router";
 // Set Vue globally
 window.Vue = Vue;
 // Set Vue router
-Vue.http.options.root = `${process.env.MIX_APP_URL}/api`;
+
 Vue.router = router;
 Vue.router = new VueRouter();
+Vue.http.options.root = `${process.env.MIX_APP_URL}/api`;
 //Vue.use(VueRouter);
 // Set Vue authentication
 Vue.use(VueAxios, axios);
